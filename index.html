@@ -995,7 +995,7 @@
             }
         }
 
-        function copyWhatsAppSummary() {
+        async function copyWhatsAppSummary() {
             const yesList = state.publishers.filter(p => p.status === 'yes').sort((a, b) => a.name.localeCompare(b.name));
             const maybeList = state.publishers.filter(p => p.status === 'maybe').sort((a, b) => a.name.localeCompare(b.name));
             
@@ -1008,7 +1008,7 @@
             text += `_Reporte actualizado en tiempo real_\n\n`;
             text += `*📊 RESUMEN DE ASISTENCIA:*\n`;
             text += `• *Confirmados (SÍ):* ${grandTotalYes} personas (${totalYesPub} publicadores/externos + ${totalYesGuests} acompañantes)\n`;
-            text += `• *Dudosos (Tal vez):* ${state.publishers.filter(p => p.status === 'maybe').length + state.publishers.filter(p => p.status === 'maybe').reduce((acc, p) => acc + p.guests.length, 0)} personas\n`;
+            text += `• *Pendientes (Tal vez):* ${state.publishers.filter(p => p.status === 'maybe').length + state.publishers.filter(p => p.status === 'maybe').reduce((acc, p) => acc + p.guests.length, 0)} personas\n`;
             text += `• *Capacidad del Bus:* ${grandTotalYes} / ${state.busCapacity} asientos ocupados\n\n`;
 
             text += `*✅ DETALLE DE CONFIRMADOS (SÍ):*\n`;
@@ -1040,21 +1040,57 @@
                 });
             }
 
-            const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = text;
-            document.body.appendChild(tempTextArea);
-            
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showNotification('¡Reporte copiado! Listo para pegar en WhatsApp.', 'success');
-                } else {
-                    showNotification('No se pudo copiar automáticamente.', 'error');
+            // Lógica híbrida y súper robusta para copiar al portapapeles en celulares Android/PWA
+            let copiedSuccessfully = false;
+
+            // Método principal: API del Portapapeles (Óptimo para PWA bajo HTTPS)
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    copiedSuccessfully = true;
+                } catch (err) {
+                    console.warn("La API Clipboard falló, intentando método de compatibilidad...", err);
                 }
-            } catch (err) {
-                showNotification('Error al copiar el reporte.', 'error');
             }
-            document.body.removeChild(tempTextArea);
+
+            // Método de respaldo: Área de texto temporal (Necesaria para iframes y navegadores antiguos)
+            if (!copiedSuccessfully) {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = text;
+                
+                // Estilo preventivo para evitar que la pantalla salte o parpadee en móvil
+                tempTextArea.style.position = 'fixed';
+                tempTextArea.style.top = '0';
+                tempTextArea.style.left = '0';
+                tempTextArea.style.width = '2em';
+                tempTextArea.style.height = '2em';
+                tempTextArea.style.padding = '0';
+                tempTextArea.style.border = 'none';
+                tempTextArea.style.outline = 'none';
+                tempTextArea.style.boxShadow = 'none';
+                tempTextArea.style.background = 'transparent';
+                
+                document.body.appendChild(tempTextArea);
+                
+                // Enfoque móvil estricto
+                tempTextArea.focus();
+                tempTextArea.select();
+                tempTextArea.setSelectionRange(0, 99999); // Rango de seguridad para iOS y navegadores móviles
+                
+                try {
+                    copiedSuccessfully = document.execCommand('copy');
+                } catch (err) {
+                    console.error("El método de compatibilidad execCommand también falló:", err);
+                }
+                
+                document.body.removeChild(tempTextArea);
+            }
+
+            if (copiedSuccessfully) {
+                showNotification('¡Reporte copiado! Listo para pegar en WhatsApp.', 'success');
+            } else {
+                showNotification('No se pudo copiar automáticamente. Intenta de nuevo.', 'error');
+            }
         }
 
         function showNotification(message, type = 'success') {
