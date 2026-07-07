@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Control de Transporte - Asamblea Anaquito</title>
+    
+    <!-- Soporte PWA y App Móvil Nativa -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Transporte Anaquito">
+    <meta name="theme-color" content="#020617">
+    
+    <!-- Enlace de manifiesto dinámico optimizado con hermosos iconos de bus en alta definición -->
+    <link id="pwa-manifest" rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkNvbnRyb2wgZGUgVHJhbnNwb3J0ZSIsCiAgInNob3J0X25hbWUiOiAiVHJhbnNwb3J0ZSBBbmFxdWl0byIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDIwNjE3IiwKICAidGhlbWVfY29sb3IiOiAiIzAyMDYxNyIsCiAgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaHR0cHM6Ly9pbWcuaWNvbnM4LmNvbS9mbHVlbmN5LzE5Mi8wMDAwMDAvYnVzLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJodHRwczovL2ltZy5pY29uczguY29tL2ZsdWVuY3kvNTEyLzAwMDAwMC9idXMucG5nIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9CiAgXQp9">
+
+    <!-- Tailwind CSS para diseño fluido y rápido -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome para Iconos interactivos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        /* Ocultar barras de scroll para una experiencia de app más limpia */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        .active-tab-btn {
+            color: #6366f1; /* indigo-500 */
+        }
+        .active-tab-btn i {
+            transform: translateY(-2px);
+            color: #6366f1;
+        }
+        /* Efecto de pulsado táctil */
+        .tap-feedback:active {
+            transform: scale(0.96);
+            opacity: 0.9;
+        }
+        /* Animaciones para transiciones fluidas */
+        .slide-up {
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(15px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="h-full text-slate-100 flex flex-col bg-slate-950 overflow-hidden max-w-md mx-auto shadow-2xl border-x border-slate-800">
+
+    <header class="bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 pt-3 pb-2 sticky top-0 z-40 shrink-0">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-indigo-600/20 text-indigo-400 p-2 rounded-xl border border-indigo-500/30">
+                    <i class="fa-solid fa-bus text-base"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-extrabold tracking-tight text-white">Transporte Anaquito</h1>
+                    <p class="text-[10px] text-slate-400 font-medium">Asamblea Regional 2026</p>
+                </div>
+            </div>
+            <!-- Acciones rápidas en la cabecera -->
+            <div class="flex items-center gap-2">
+                <!-- Botón de instalación nativa (Se destaca dinámicamente si es posible la instalación directa) -->
+                <button id="header-install-btn" onclick="triggerDirectInstall()" class="tap-feedback bg-indigo-600 hover:bg-indigo-500 text-white p-2.5 rounded-xl text-xs font-semibold flex items-center justify-center shadow-md shadow-indigo-950/40 border border-indigo-500/30 animate-bounce" title="Instalar en Pantalla">
+                    <i class="fa-solid fa-download text-sm"></i>
+                </button>
+                <button onclick="copyWhatsAppSummary()" class="tap-feedback bg-emerald-600 hover:bg-emerald-700 text-white p-2.5 rounded-xl text-xs font-semibold flex items-center justify-center shadow-md shadow-emerald-950/40 border border-emerald-500/30">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Indicador de Ocupación / Asistencia Compacto (Fijo Arriba) -->
+        <div class="mt-2.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800/85">
+            <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 mb-1">
+                <span id="occupancy-label" class="uppercase tracking-wider">OCUPACIÓN DEL BUS (SÍ)</span>
+                <span id="occupancy-ratio" class="text-indigo-400">0 / 48 (0%)</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden p-0.5 border border-slate-700/50">
+                <div id="occupancy-bar" class="bg-indigo-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto px-3 py-4 pb-24">
+
+        <!-- ================= PESTAÑA 1: LISTADO DE HERMANOS ================= -->
+        <section id="tab-content-list" class="space-y-3 slide-up">
+            <!-- Buscador y Controladores de Lista -->
+            <div class="bg-slate-900 p-3 rounded-2xl border border-slate-800/80 shadow-md space-y-3">
+                <div class="flex gap-2">
+                    <div class="relative flex-1">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="fa-solid fa-magnifying-glass text-slate-500 text-xs"></i>
+                        </span>
+                        <input type="text" id="search-input" oninput="filterPublishers()" placeholder="Buscar hermano o acompañante..." class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs placeholder:text-slate-500 text-white">
+                    </div>
+                    <!-- Botón para añadir hermano externo de otra congregación -->
+                    <button onclick="openExternalModal()" class="tap-feedback bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 rounded-xl text-xs font-bold flex items-center gap-1 border border-indigo-500/30 shrink-0" title="Añadir de otra congregación">
+                        <i class="fa-solid fa-user-plus text-sm"></i>
+                        <span class="hidden xs:inline">Externo</span>
+                    </button>
+                </div>
+                
+                <!-- Separador de modo "Pase de Lista / Asistencia" -->
+                <div class="flex items-center justify-between p-2 bg-slate-950/80 rounded-xl border border-slate-800/60">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" id="live-indicator"></div>
+                        <span class="text-[11px] font-bold text-slate-300">Modo Pase de Lista (Asistencia)</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="checkin-toggle" onchange="toggleCheckInMode()" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+
+                <!-- Filtros rápidos segmentados en chips -->
+                <div id="filters-container" class="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none transition duration-150">
+                    <button onclick="setFilter('all')" id="filter-all" class="tap-feedback px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 transition shrink-0">Todos (<span id="count-filter-all">65</span>)</button>
+                    <button onclick="setFilter('unassigned')" id="filter-unassigned" class="tap-feedback px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700 transition shrink-0">Pendientes (<span id="count-filter-pending">65</span>)</button>
+                    <button onclick="setFilter('yes')" id="filter-yes" class="tap-feedback px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-emerald-500 border border-slate-700 transition shrink-0">Confirmados (<span id="count-filter-yes">0</span>)</button>
+                </div>
+            </div>
+
+            <!-- Contenedor de Tarjetas de Publicadores -->
+            <div id="publisher-list-container" class="space-y-2">
+                <!-- Se inyecta dinámicamente mediante JS -->
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA 2: AGRUPACIONES (GRUPOS) ================= -->
+        <section id="tab-content-groups" class="hidden space-y-3 slide-up">
+            
+            <!-- Grupo: SÍ (Confirmados) -->
+            <div class="bg-slate-900 rounded-2xl shadow-md border border-emerald-950/80 overflow-hidden">
+                <div class="bg-emerald-950/30 border-b border-emerald-900/50 px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
+                        <h3 class="font-bold text-emerald-400 text-xs tracking-wider uppercase font-extrabold">Confirmados (SÍ)</h3>
+                    </div>
+                    <span class="bg-emerald-500/20 text-emerald-400 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/30" id="group-yes-total">0</span>
+                </div>
+                <div class="p-3 divide-y divide-slate-800/60 max-h-[250px] overflow-y-auto" id="group-yes-list">
+                    <!-- Lista de confirmados -->
+                </div>
+            </div>
+
+            <!-- Grupo: TAL VEZ (Dudosos) -->
+            <div class="bg-slate-900 rounded-2xl shadow-md border border-amber-950/80 overflow-hidden">
+                <div class="bg-amber-950/20 border-b border-amber-900/50 px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question text-amber-500 text-sm"></i>
+                        <h3 class="font-bold text-amber-400 text-xs tracking-wider uppercase font-extrabold">Dudosos (TAL VEZ)</h3>
+                    </div>
+                    <span class="bg-amber-500/20 text-amber-400 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-amber-500/30" id="group-maybe-total">0</span>
+                </div>
+                <div class="p-3 divide-y divide-slate-800/60 max-h-[160px] overflow-y-auto" id="group-maybe-list">
+                    <!-- Lista de dudosos -->
+                </div>
+            </div>
+
+            <!-- Grupo: NO (No viajan) -->
+            <div class="bg-slate-900 rounded-2xl shadow-md border border-rose-950/80 overflow-hidden">
+                <div class="bg-rose-950/20 border-b border-rose-900/50 px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-xmark text-rose-500 text-sm"></i>
+                        <h3 class="font-bold text-rose-400 text-xs tracking-wider uppercase font-extrabold">No Viajan</h3>
+                    </div>
+                    <span class="bg-rose-500/20 text-rose-400 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-rose-500/30" id="group-no-total">0</span>
+                </div>
+                <div class="p-3 divide-y divide-slate-800/60 max-h-[160px] overflow-y-auto" id="group-no-list">
+                    <!-- Lista de descartados -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA 3: RESUMEN Y CONFIGURACIÓN ================= -->
+        <section id="tab-content-stats" class="hidden space-y-4 slide-up">
+            
+            <!-- Tarjeta de Instalación Directa Especial para GitHub / Celular Redmi -->
+            <div class="bg-gradient-to-br from-indigo-950 to-slate-900 p-4 rounded-2xl border border-indigo-500/30 shadow-md">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-mobile-screen-button text-sm"></i>
+                    <span>Acceso Directo PWA</span>
+                </h4>
+                <p class="text-[11px] text-slate-300 leading-relaxed mb-3">Instala esta aplicación directamente en tu Redmi 15. Funcionará a pantalla completa como una App nativa de la Play Store.</p>
+                
+                <button id="direct-install-btn" onclick="triggerDirectInstall()" class="tap-feedback w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 border border-indigo-400/30 shadow-md transition-all">
+                    <i class="fa-solid fa-download text-sm animate-bounce"></i>
+                    <span id="install-btn-text">INSTALAR DIRECTAMENTE EN REDMI</span>
+                </button>
+            </div>
+
+            <!-- Entrada de Capacidad del Bus -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3"><i class="fa-solid fa-sliders text-indigo-400 mr-1.5"></i>Límite de Asientos</h4>
+                <div class="flex items-center justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                    <span class="text-xs font-medium text-slate-400">Capacidad del Bus</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="decrementCapacity()" class="tap-feedback w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-extrabold text-lg flex items-center justify-center border border-slate-700">-</button>
+                        <input type="number" id="bus-capacity" value="48" min="1" max="120" onchange="updateBusCapacity(this.value)" class="w-12 bg-transparent text-center font-bold text-sm text-indigo-400 outline-none">
+                        <button onclick="incrementCapacity()" class="tap-feedback w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-extrabold text-lg flex items-center justify-center border border-slate-700">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Resumen Técnico Con los 65 Publicadores -->
+            <div class="bg-slate-900 rounded-2xl shadow-md p-4 border border-slate-800">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800 pb-2 mb-3"><i class="fa-solid fa-chart-simple text-indigo-400 mr-1.5"></i>Consolidado de Pasajeros</h4>
+                <div class="grid grid-cols-4 text-center text-[10px] font-extrabold text-slate-500 uppercase tracking-wider gap-1 pb-1">
+                    <div></div>
+                    <div>Publ.</div>
+                    <div>Acomp.</div>
+                    <div class="text-right">Subtotal</div>
+                </div>
+                <div class="divide-y divide-slate-800/80 text-xs space-y-2 pt-1">
+                    <div class="grid grid-cols-4 items-center text-center py-2">
+                        <div class="text-left font-semibold text-emerald-400">Confirmados</div>
+                        <div id="table-pub-yes" class="text-slate-300">0</div>
+                        <div id="table-guest-yes" class="text-slate-300">0</div>
+                        <div id="table-sub-yes" class="text-right font-bold text-emerald-400">0</div>
+                    </div>
+                    <div class="grid grid-cols-4 items-center text-center py-2">
+                        <div class="text-left font-semibold text-amber-400">Tal Vez</div>
+                        <div id="table-pub-maybe" class="text-slate-300">0</div>
+                        <div id="table-guest-maybe" class="text-slate-300">0</div>
+                        <div id="table-sub-maybe" class="text-right font-bold text-amber-400">0</div>
+                    </div>
+                    <div class="grid grid-cols-4 items-center text-center py-2">
+                        <div class="text-left font-semibold text-rose-400">No van</div>
+                        <div id="table-pub-no" class="text-slate-300">0</div>
+                        <div id="table-guest-no" class="text-slate-300">0</div>
+                        <div id="table-sub-no" class="text-right font-bold text-rose-400">0</div>
+                    </div>
+                    <div class="grid grid-cols-4 items-center text-center py-2.5 font-bold text-white bg-slate-950 p-2 rounded-xl border border-slate-800">
+                        <div class="text-left text-[11px] uppercase tracking-wider">TOTALES</div>
+                        <div id="table-total-pub">65</div>
+                        <div id="table-total-guest">0</div>
+                        <div id="table-total-grand" class="text-right text-indigo-400 font-extrabold text-sm">65</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones de Gestión de Datos y Reinicio Diario de Pase de Lista -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-md space-y-2.5">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-gears text-indigo-400 mr-1.5"></i>Operaciones de Datos</h4>
+                
+                <button onclick="copyWhatsAppSummary()" class="tap-feedback w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-emerald-500/30 shadow-md">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <span>COPIAR REPORTE WHATSAPP</span>
+                </button>
+
+                <!-- Botón de Reinicio Diario del Abordaje (Pase de lista del viernes/sábado/domingo) -->
+                <button onclick="confirmResetCheckin()" id="reset-checkin-btn" class="tap-feedback w-full bg-indigo-950/30 hover:bg-indigo-900/40 text-indigo-300 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-indigo-850/40 transition">
+                    <i class="fa-solid fa-rotate text-sm"></i>
+                    <span id="reset-checkin-text">REINICIAR ABORDAJE (NUEVO DÍA)</span>
+                </button>
+
+                <button onclick="confirmReset()" id="reset-btn" class="tap-feedback w-full bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-rose-900/40 transition">
+                    <i class="fa-solid fa-trash-can text-sm"></i>
+                    <span id="reset-text">REINICIAR TODO EL REGISTRO</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Barra de Navegación Fija Inferior (Estilo App Nativa de Celular) -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 backdrop-blur border-t border-slate-800 px-6 py-2 flex justify-between items-center z-50 shadow-2xl h-[68px]">
+        
+        <!-- Botón Pestaña 1 -->
+        <button onclick="switchTab('list')" id="nav-btn-list" class="flex flex-col items-center gap-1 text-[10px] font-bold text-slate-400 w-16 transition-all duration-200 active-tab-btn">
+            <i class="fa-solid fa-clipboard-list text-lg transition duration-200"></i>
+            <span>Lista</span>
+        </button>
+
+        <!-- Botón Pestaña 2 -->
+        <button onclick="switchTab('groups')" id="nav-btn-groups" class="flex flex-col items-center gap-1 text-[10px] font-bold text-slate-400 w-16 transition-all duration-200">
+            <i class="fa-solid fa-user-group text-lg transition duration-200"></i>
+            <span>Grupos</span>
+        </button>
+
+        <!-- Botón Pestaña 3 -->
+        <button onclick="switchTab('stats')" id="nav-btn-stats" class="flex flex-col items-center gap-1 text-[10px] font-bold text-slate-400 w-16 transition-all duration-200">
+            <i class="fa-solid fa-chart-pie text-lg transition duration-200"></i>
+            <span>Resumen</span>
+        </button>
+    </nav>
+
+    <!-- MODAL POPUP: Añadir Hermano Externo de Otra Congregación -->
+    <div id="external-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xs p-5 shadow-2xl space-y-4">
+            <div class="flex items-center gap-2 text-indigo-400">
+                <i class="fa-solid fa-building-flag text-lg"></i>
+                <h3 class="font-extrabold text-sm text-white">Hermano de Otra Cong.</h3>
+            </div>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Nombre Completo</label>
+                    <input type="text" id="ext-name" placeholder="Ej: Luis Díaz" class="w-full px-3 py-2 bg-slate-950 border border-slate-850 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Congregación de Origen</label>
+                    <input type="text" id="ext-cong" placeholder="Ej: Las Villas" class="w-full px-3 py-2 bg-slate-950 border border-slate-850 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 text-xs text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-1">
+                <button onclick="closeExternalModal()" class="tap-feedback py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-300 border border-slate-700">Cancelar</button>
+                <button onclick="saveExternalBrother()" class="tap-feedback py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white">Agregar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Caja Flotante de Avisos/Notificaciones (Evita usar alert) -->
+    <div id="notification" class="fixed bottom-20 left-4 right-4 z-50 bg-slate-900 border border-indigo-500/30 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-24 opacity-0 transition duration-300 pointer-events-none max-w-sm mx-auto">
+        <i id="notification-icon" class="fa-solid fa-circle-check text-emerald-400 text-base shrink-0"></i>
+        <p id="notification-text" class="text-xs font-semibold leading-snug"></p>
+    </div>
+
+    <script>
+        // Listado de los 65 publicadores originales cargados por defecto de la Congregación Anaquito
+        const initialPublishersList = [
+            "Marcos Pantoja", "Isaac Amesty", "Aisker Calzadilla", "Andreina de Carima", "Leda de Navarro",
+            "Manuel Carima", "María de Guzmán", "María de Navarrete", "María E. Reinefeld", "Rosa de Areyan",
+            "Rosa de Martínez", "Yuraima de Español", "Cesar Graterol", "Alexander Toledo", "Ana de Figuera",
+            "Anggie Graterol", "Antonio Campos", "Edelmira Maitan", "Eleida de Campos", "Inés Rodríguez",
+            "Kiryat de Graterol", "Mireya de Guzmán", "Nilda de Benavides", "Stephany de Toledo", "Yudelys Guaiquirima",
+            "Felipe González", "Carlos Loreto", "América de Freites", "Argenis Freites", "Diunnira de Loreto",
+            "Jairo Rojas", "José Fajardo", "Julia de González", "Liliana Fajardo", "Mónica Rojas",
+            "Noemí González", "Norelys de Fajardo", "Yusmelys de Rojas", "Alberto Lugo", "Edwin Ortiz",
+            "Arcidio Figuera", "Carmen de Figuera", "Dilia de Valor", "Erick Rojas", "Jean Luis Valor",
+            "Lizaida de Lugo", "Luisa de Malavé", "Maritza de Rojas", "Marlene Zamora", "Miriam de Arismendí",
+            "Noris de Villanueva", "Vestalia de Guzman", "Josué Fuenmayor", "Alirio Duque", "Brivis de Valladares",
+            "Ingrid Ramos", "Javier Govia", "Julehana Rivas", "Karina de Fuenmayor", "Leonardo Rivas",
+            "Lineth Valladares", "Lisandro Rivas", "Luisa de Duque", "María de Govia", "Yoberkys de García"
+        ];
+
+        // Estado completo de la aplicación
+        let state = {
+            publishers: [],
+            busCapacity: 48,
+            currentFilter: 'all',
+            searchQuery: '',
+            currentTab: 'list',
+            checkInMode: false
+        };
+
+        let confirmResetStage = 0; 
+        let confirmResetCheckinStage = 0;
+        let deferredPrompt = null;
+
+        // Al iniciar la pantalla
+        window.onload = function() {
+            loadState();
+            render();
+            switchTab(state.currentTab || 'list');
+            setupPWAHandler();
+        };
+
+        // Guardar de manera persistente en LocalStorage
+        function saveState() {
+            localStorage.setItem('anaquito_transport_state_v3', JSON.stringify(state));
+        }
+
+        // Cargar el estado
+        function loadState() {
+            const saved = localStorage.getItem('anaquito_transport_state_v3');
+            if (saved) {
+                try {
+                    state = JSON.parse(saved);
+                    
+                    // Sincronización segura de estados de acompañantes
+                    state.publishers.forEach(p => {
+                        if (p.guests && p.guests.length > 0 && typeof p.guests[0] === 'string') {
+                            p.guests = p.guests.map(gName => ({ name: gName, boarded: false }));
+                        }
+                        if (p.boarded === undefined) p.boarded = false;
+                    });
+                } catch (e) {
+                    initDefaultState();
+                }
+            } else {
+                initDefaultState();
+            }
+        }
+
+        // Estado base con los 65 publicadores
+        function initDefaultState() {
+            state.publishers = initialPublishersList.map((name, index) => ({
+                id: index + 1,
+                name: name,
+                status: 'unassigned',
+                guests: [],
+                boarded: false,
+                isExternal: false,
+                congregation: ''
+            }));
+            state.busCapacity = 48;
+            state.currentFilter = 'all';
+            state.searchQuery = '';
+            state.currentTab = 'list';
+            state.checkInMode = false;
+            saveState();
+        }
+
+        function setupPWAHandler() {
+            // Escuchar el evento nativo de Chrome/Android
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Actualizar interfaz avisando que ya se puede instalar nativamente
+                const btnText = document.getElementById('install-btn-text');
+                if(btnText) btnText.innerText = "¡INSTALAR AHORA EN REDMI!";
+                
+                const headerBtn = document.getElementById('header-install-btn');
+                if(headerBtn) {
+                    headerBtn.classList.remove('bg-indigo-600');
+                    headerBtn.classList.add('bg-emerald-600', 'animate-pulse');
+                }
+            });
+
+            window.addEventListener('appinstalled', () => {
+                deferredPrompt = null;
+                showNotification('¡Felicidades! Se instaló el Control de Transporte en tu escritorio.', 'success');
+            });
+        }
+
+        // Disparar la ventana de instalación o el aviso en local
+        function triggerDirectInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showNotification('Instalando aplicación...', 'info');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // Verificar si ya está ejecutándose como PWA instalada
+                if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+                    showNotification('¡La App ya está instalada y ejecutándose en tu pantalla de inicio! 🎉', 'success');
+                } else {
+                    // Si está en local o no en HTTPS, avisar cómo agregarlo de forma manual con los 3 puntos
+                    showNotification('Para tu Redmi 15: Pulsa los 3 puntos arriba en Chrome y selecciona "Agregar a la pantalla de inicio".', 'info');
+                }
+            }
+        }
+
+        // Abrir y cerrar modal para registrar hermanos externos
+        function openExternalModal() {
+            document.getElementById('external-modal').classList.remove('hidden');
+            document.getElementById('ext-name').focus();
+        }
+
+        function closeExternalModal() {
+            document.getElementById('external-modal').classList.add('hidden');
+            document.getElementById('ext-name').value = '';
+            document.getElementById('ext-cong').value = '';
+        }
+
+        function saveExternalBrother() {
+            const nameInput = document.getElementById('ext-name').value.trim();
+            const congInput = document.getElementById('ext-cong').value.trim() || 'Otra Cong.';
+            
+            if (nameInput) {
+                const newBrother = {
+                    id: Date.now(),
+                    name: nameInput,
+                    status: 'yes', // Se asume confirmado al agregarlo en la última semana
+                    guests: [],
+                    boarded: false,
+                    isExternal: true,
+                    congregation: congInput
+                };
+                
+                state.publishers.push(newBrother);
+                saveState();
+                render();
+                closeExternalModal();
+                showNotification(`Se agregó a "${nameInput}" (${congInput}) como confirmado.`, 'success');
+            } else {
+                showNotification('El nombre completo es requerido.', 'error');
+            }
+        }
+
+        // Modificar capacidad del bus
+        function updateBusCapacity(val) {
+            const num = parseInt(val);
+            if (num && num > 0) {
+                state.busCapacity = num;
+                saveState();
+                render();
+            }
+        }
+
+        function incrementCapacity() {
+            const current = parseInt(document.getElementById('bus-capacity').value);
+            updateBusCapacity(current + 1);
+            document.getElementById('bus-capacity').value = state.busCapacity;
+        }
+
+        function decrementCapacity() {
+            const current = parseInt(document.getElementById('bus-capacity').value);
+            if (current > 1) {
+                updateBusCapacity(current - 1);
+                document.getElementById('bus-capacity').value = state.busCapacity;
+            }
+        }
+
+        function switchTab(tabId) {
+            state.currentTab = tabId;
+            saveState();
+
+            ['list', 'groups', 'stats'].forEach(id => {
+                document.getElementById(`tab-content-${id}`).classList.add('hidden');
+                document.getElementById(`nav-btn-${id}`).classList.remove('active-tab-btn');
+            });
+
+            document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`nav-btn-${tabId}`).classList.add('active-tab-btn');
+        }
+
+        // Cambiar el estado de viaje del publicador
+        function setPublisherStatus(id, newStatus) {
+            const pub = state.publishers.find(p => p.id === id);
+            if (pub) {
+                if (pub.status === newStatus) {
+                    pub.status = 'unassigned';
+                } else {
+                    pub.status = newStatus;
+                }
+                saveState();
+                render();
+            }
+        }
+
+        // Alternar pase de lista individual diario (Pase de Abordaje)
+        function togglePublisherBoarding(id) {
+            const pub = state.publishers.find(p => p.id === id);
+            if (pub) {
+                pub.boarded = !pub.boarded;
+                saveState();
+                render();
+            }
+        }
+
+        // Alternar pase de lista de acompañantes
+        function toggleGuestBoarding(pubId, guestIndex) {
+            const pub = state.publishers.find(p => p.id === pubId);
+            if (pub && pub.guests[guestIndex]) {
+                pub.guests[guestIndex].boarded = !pub.guests[guestIndex].boarded;
+                saveState();
+                render();
+            }
+        }
+
+        function toggleGuestForm(id) {
+            const form = document.getElementById(`guest-form-${id}`);
+            if (form) {
+                form.classList.toggle('hidden');
+                if (!form.classList.contains('hidden')) {
+                    document.getElementById(`guest-input-${id}`).focus();
+                }
+            }
+        }
+
+        // Guardar acompañante
+        function submitGuest(id) {
+            const input = document.getElementById(`guest-input-${id}`);
+            const name = input.value.trim();
+            if (name) {
+                const pub = state.publishers.find(p => p.id === id);
+                if (pub) {
+                    pub.guests.push({ name: name, boarded: false });
+                    input.value = '';
+                    toggleGuestForm(id);
+                    saveState();
+                    render();
+                    showNotification(`Se añadió a "${name}" como acompañante de ${pub.name}.`, 'success');
+                }
+            }
+        }
+
+        // Eliminar acompañante
+        function removeGuest(pubId, index) {
+            const pub = state.publishers.find(p => p.id === pubId);
+            if (pub) {
+                const removed = pub.guests.splice(index, 1);
+                saveState();
+                render();
+                showNotification(`Se eliminó el acompañante "${removed[0].name}".`, 'info');
+            }
+        }
+
+        function toggleCheckInMode() {
+            state.checkInMode = document.getElementById('checkin-toggle').checked;
+            
+            const filters = document.getElementById('filters-container');
+            if (state.checkInMode) {
+                filters.classList.add('opacity-0', 'pointer-events-none', 'h-0', 'overflow-hidden');
+                showNotification('Modo Pase de Lista Activo. ¡Toca los nombres a medida que suban al bus!', 'info');
+            } else {
+                filters.classList.remove('opacity-0', 'pointer-events-none', 'h-0', 'overflow-hidden');
+            }
+            saveState();
+            render();
+        }
+
+        // Modificar filtro rápido
+        function setFilter(filterType) {
+            state.currentFilter = filterType;
+            
+            ['all', 'unassigned', 'yes'].forEach(f => {
+                const btn = document.getElementById(`filter-${f}`);
+                if (f === filterType) {
+                    btn.className = getFilterActiveClass(f);
+                } else {
+                    btn.className = "tap-feedback px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700 transition shrink-0";
+                }
+            });
+
+            render();
+        }
+
+        function getFilterActiveClass(f) {
+            if (f === 'all') return "tap-feedback px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 transition shrink-0";
+            if (f === 'unassigned') return "tap-feedback px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-700 text-white border border-slate-600 transition shrink-0";
+            if (f === 'yes') return "tap-feedback px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 transition shrink-0";
+        }
+
+        function filterPublishers() {
+            state.searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+            render();
+        }
+
+        // Renderizado general reactivo de la aplicación
+        function render() {
+            document.getElementById('checkin-toggle').checked = state.checkInMode;
+            const liveIndicator = document.getElementById('live-indicator');
+            if (state.checkInMode) {
+                liveIndicator.classList.remove('bg-amber-500');
+                liveIndicator.classList.add('bg-emerald-500');
+            } else {
+                liveIndicator.classList.remove('bg-emerald-500');
+                liveIndicator.classList.add('bg-amber-500');
+            }
+
+            const listContainer = document.getElementById('publisher-list-container');
+            listContainer.innerHTML = '';
+
+            let filteredList = state.publishers.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(state.searchQuery) || 
+                                     p.guests.some(g => g.name.toLowerCase().includes(state.searchQuery));
+                
+                if (!matchesSearch) return false;
+                if (state.checkInMode) return p.status === 'yes';
+                if (state.currentFilter === 'unassigned') return p.status === 'unassigned';
+                if (state.currentFilter === 'yes') return p.status === 'yes';
+                
+                return true;
+            });
+
+            filteredList.sort((a, b) => a.name.localeCompare(b.name));
+
+            if (filteredList.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-16 text-slate-500">
+                        <i class="fa-solid fa-face-frown text-4xl mb-3"></i>
+                        <p class="text-xs font-bold">${state.checkInMode ? 'No hay confirmados que listar para hoy.' : 'No se encontraron publicadores.'}</p>
+                    </div>
+                `;
+            } else {
+                filteredList.forEach(pub => {
+                    const card = createPublisherCard(pub);
+                    listContainer.appendChild(card);
+                });
+            }
+
+            updateGroupedPanels();
+            updateGlobalStats();
+        }
+
+        // Crear tarjeta interactiva
+        function createPublisherCard(pub) {
+            const div = document.createElement('div');
+            
+            if (state.checkInMode) {
+                // Modo Pase de Lista
+                const pubBoardedClass = pub.boarded 
+                    ? 'bg-emerald-600 border-emerald-500 text-white font-bold shadow-md shadow-emerald-950/20' 
+                    : 'bg-slate-950 border-slate-800 text-slate-400';
+
+                let guestsBoardingHtml = '';
+                if (pub.guests.length > 0) {
+                    guestsBoardingHtml = `
+                        <div class="mt-2 pl-3 border-l-2 border-indigo-500/30 space-y-1.5">
+                            ${pub.guests.map((guest, idx) => {
+                                const guestBoardedClass = guest.boarded 
+                                    ? 'bg-emerald-600 border-emerald-500 text-white font-bold' 
+                                    : 'bg-slate-900 border-slate-800 text-slate-400';
+                                return `
+                                    <div onclick="toggleGuestBoarding(${pub.id}, ${idx})" class="tap-feedback flex items-center justify-between text-xs px-3 py-2 rounded-xl border transition duration-150 cursor-pointer ${guestBoardedClass}">
+                                        <span><i class="fa-solid fa-user-tag text-[9px] mr-2"></i>${guest.name}</span>
+                                        <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${guest.boarded ? 'bg-white/20' : 'bg-slate-950/60 text-slate-500'}">
+                                            ${guest.boarded ? 'A bordo 🚌' : 'Falta ❌'}
+                                        </span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+
+                div.className = "p-3 bg-slate-900 border border-slate-800 rounded-2xl transition duration-150";
+                div.innerHTML = `
+                    <div class="flex flex-col gap-2">
+                        <div onclick="togglePublisherBoarding(${pub.id})" class="tap-feedback flex justify-between items-center px-3 py-2.5 rounded-xl border transition duration-150 cursor-pointer ${pubBoardedClass}">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm">${pub.name}</span>
+                                ${pub.isExternal ? `<span class="bg-amber-500/20 text-amber-300 text-[9px] font-extrabold px-1.5 py-0.5 rounded border border-amber-500/30">${pub.congregation}</span>` : ''}
+                            </div>
+                            <span class="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${pub.boarded ? 'bg-white/20' : 'bg-slate-950/60 text-slate-500'}">
+                                ${pub.boarded ? 'A bordo 🚌' : 'Falta ❌'}
+                            </span>
+                        </div>
+                        ${guestsBoardingHtml}
+                    </div>
+                `;
+                return div;
+            }
+
+            div.className = `p-3.5 rounded-2xl border transition duration-150 ${
+                pub.status === 'yes' ? 'bg-slate-900 border-emerald-500/20 shadow-sm shadow-emerald-950/20' :
+                pub.status === 'maybe' ? 'bg-slate-900 border-amber-500/10' :
+                pub.status === 'no' ? 'bg-slate-900/40 border-rose-950/40 opacity-60' :
+                'bg-slate-900 border-slate-800'
+            }`;
+
+            let guestsHtml = '';
+            if (pub.guests.length > 0) {
+                guestsHtml = `
+                    <div class="mt-2 pl-3 border-l-2 border-indigo-500/30 space-y-1.5">
+                        ${pub.guests.map((guest, idx) => `
+                            <div class="flex items-center justify-between text-xs bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800/80">
+                                <span class="font-medium text-slate-300"><i class="fa-solid fa-user-tag text-[9px] text-indigo-400 mr-2"></i>${guest.name}</span>
+                                <button onclick="removeGuest(${pub.id}, ${idx})" class="text-rose-500 hover:text-rose-400 p-1 shrink-0" title="Eliminar">
+                                    <i class="fa-solid fa-xmark text-sm"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            const yesClass = pub.status === 'yes' 
+                ? 'bg-emerald-600 text-white font-extrabold shadow-md shadow-emerald-950' 
+                : 'bg-slate-950 text-slate-500 border border-slate-850';
+                
+            const maybeClass = pub.status === 'maybe' 
+                ? 'bg-amber-500 text-slate-950 font-extrabold shadow-md shadow-amber-950' 
+                : 'bg-slate-950 text-slate-500 border border-slate-850';
+                
+            const noClass = pub.status === 'no' 
+                ? 'bg-rose-500 text-white font-extrabold shadow-md shadow-rose-950' 
+                : 'bg-slate-950 text-slate-500 border border-slate-850';
+
+            const externalBadge = pub.isExternal 
+                ? `<span class="bg-amber-500/20 text-amber-300 text-[9px] font-extrabold px-2 py-0.5 rounded border border-amber-500/30"><i class="fa-solid fa-building-flag mr-1"></i>${pub.congregation}</span>` 
+                : '';
+
+            div.innerHTML = `
+                <div class="flex flex-col gap-2.5">
+                    <div class="flex justify-between items-center gap-2">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-bold text-sm text-slate-100">${pub.name}</span>
+                                ${externalBadge}
+                                ${pub.guests.length > 0 ? `<span class="bg-indigo-500/20 text-indigo-300 text-[9px] font-extrabold px-2 py-0.5 rounded-full border border-indigo-500/30"><i class="fa-solid fa-user-group text-[8px] mr-1"></i>+${pub.guests.length}</span>` : ''}
+                            </div>
+                        </div>
+                        
+                        <button onclick="toggleGuestForm(${pub.id})" class="tap-feedback p-2 text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-xl transition border border-slate-800 bg-slate-950 shrink-0" title="Acompañante">
+                            <i class="fa-solid fa-user-plus text-xs"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 rounded-xl overflow-hidden border border-slate-800 p-0.5 bg-slate-950">
+                        <button onclick="setPublisherStatus(${pub.id}, 'yes')" class="tap-feedback py-2 rounded-lg text-xs font-bold tracking-wide transition duration-100 ${yesClass}">Sí</button>
+                        <button onclick="setPublisherStatus(${pub.id}, 'maybe')" class="tap-feedback py-2 rounded-lg text-xs font-bold tracking-wide transition duration-100 ${maybeClass}">Tal vez</button>
+                        <button onclick="setPublisherStatus(${pub.id}, 'no')" class="tap-feedback py-2 rounded-lg text-xs font-bold tracking-wide transition duration-100 ${noClass}">No</button>
+                    </div>
+                </div>
+
+                <div id="guest-form-${pub.id}" class="hidden mt-3 p-3 bg-slate-950 border border-slate-800 rounded-xl">
+                    <div class="flex gap-2">
+                        <input type="text" id="guest-input-${pub.id}" placeholder="Nombre del acompañante..." class="flex-1 px-3 py-2 text-xs border border-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-slate-900 text-white">
+                        <button onclick="submitGuest(${pub.id})" class="tap-feedback bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition">Agregar</button>
+                        <button onclick="toggleGuestForm(${pub.id})" class="tap-feedback bg-slate-850 hover:bg-slate-800 text-slate-400 px-3 py-2 rounded-lg text-xs font-bold transition">X</button>
+                    </div>
+                </div>
+
+                ${guestsHtml}
+            `;
+            return div;
+        }
+
+        function updateGroupedPanels() {
+            const yesContainer = document.getElementById('group-yes-list');
+            const maybeContainer = document.getElementById('group-maybe-list');
+            const noContainer = document.getElementById('group-no-list');
+
+            yesContainer.innerHTML = '';
+            maybeContainer.innerHTML = '';
+            noContainer.innerHTML = '';
+
+            let yesCount = 0;
+            let maybeCount = 0;
+            let noCount = 0;
+
+            const sortedPublishers = [...state.publishers].sort((a, b) => a.name.localeCompare(b.name));
+
+            sortedPublishers.forEach(pub => {
+                if (pub.status === 'unassigned') return;
+
+                const totalPeople = 1 + pub.guests.length;
+                let textRepresentation = `<span class="font-bold text-slate-200 text-xs">${pub.name}</span>`;
+                if (pub.isExternal) {
+                    textRepresentation += ` <span class="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-extrabold border border-amber-500/30">${pub.congregation}</span>`;
+                }
+                
+                if (pub.guests.length > 0) {
+                    const guestNames = pub.guests.map(g => g.name).join(', ');
+                    textRepresentation += `<br><span class="text-[10px] text-slate-400 font-medium">Lleva a: ${guestNames}</span>`;
+                }
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "py-2.5 flex justify-between items-center gap-2";
+                itemDiv.innerHTML = `
+                    <div class="flex-1 mr-2 leading-tight">${textRepresentation}</div>
+                    <span class="bg-slate-800 text-indigo-300 border border-slate-700 px-2 py-0.5 rounded-lg font-bold text-[10px] whitespace-nowrap">${totalPeople} pers.</span>
+                `;
+
+                if (pub.status === 'yes') {
+                    yesContainer.appendChild(itemDiv);
+                    yesCount += totalPeople;
+                } else if (pub.status === 'maybe') {
+                    maybeContainer.appendChild(itemDiv);
+                    maybeCount += totalPeople;
+                } else if (pub.status === 'no') {
+                    noContainer.appendChild(itemDiv);
+                    noCount += totalPeople;
+                }
+            });
+
+            if (yesContainer.children.length === 0) yesContainer.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-6">Nadie confirmado aún.</p>';
+            if (maybeContainer.children.length === 0) maybeContainer.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-6">Sin registros dudosos.</p>';
+            if (noContainer.children.length === 0) noContainer.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-6">Ninguno registrado aquí.</p>';
+
+            document.getElementById('group-yes-total').innerText = yesCount;
+            document.getElementById('group-maybe-total').innerText = maybeCount;
+            document.getElementById('group-no-total').innerText = noCount;
+        }
+
+        function updateGlobalStats() {
+            let pubYes = 0, guestYes = 0;
+            let pubMaybe = 0, guestMaybe = 0;
+            let pubNo = 0, guestNo = 0;
+            let pubPending = 0;
+
+            let boardedCount = 0;
+            let totalToBoard = 0;
+
+            state.publishers.forEach(pub => {
+                if (pub.status === 'yes') {
+                    pubYes++;
+                    guestYes += pub.guests.length;
+                    
+                    totalToBoard++;
+                    if (pub.boarded) boardedCount++;
+                    
+                    pub.guests.forEach(g => {
+                        totalToBoard++;
+                        if (g.boarded) boardedCount++;
+                    });
+
+                } else if (pub.status === 'maybe') {
+                    pubMaybe++;
+                    guestMaybe += pub.guests.length;
+                } else if (pub.status === 'no') {
+                    pubNo++;
+                    guestNo += pub.guests.length;
+                } else {
+                    pubPending++;
+                }
+            });
+
+            // Actualizar tabla en pestaña Resumen
+            document.getElementById('table-pub-yes').innerText = pubYes;
+            document.getElementById('table-guest-yes').innerText = guestYes;
+            document.getElementById('table-sub-yes').innerText = pubYes + guestYes;
+
+            document.getElementById('table-pub-maybe').innerText = pubMaybe;
+            document.getElementById('table-guest-maybe').innerText = guestMaybe;
+            document.getElementById('table-sub-maybe').innerText = pubMaybe + guestMaybe;
+
+            document.getElementById('table-pub-no').innerText = pubNo;
+            document.getElementById('table-guest-no').innerText = guestNo;
+            document.getElementById('table-sub-no').innerText = pubNo + guestNo;
+
+            const totalGuests = guestYes + guestMaybe + guestNo;
+            document.getElementById('table-total-pub').innerText = state.publishers.length;
+            document.getElementById('table-total-guest').innerText = totalGuests;
+            document.getElementById('table-total-grand').innerText = state.publishers.length + totalGuests;
+
+            // Actualizar chips de filtros rápidos
+            document.getElementById('count-filter-all').innerText = state.publishers.length;
+            document.getElementById('count-filter-pending').innerText = pubPending;
+            document.getElementById('count-filter-yes').innerText = pubYes + guestYes;
+
+            const bar = document.getElementById('occupancy-bar');
+            if (state.checkInMode) {
+                const percentage = totalToBoard > 0 ? Math.min(100, Math.round((boardedCount / totalToBoard) * 100)) : 0;
+                document.getElementById('occupancy-label').innerText = "Abordaron el bus hoy";
+                document.getElementById('occupancy-ratio').innerText = `${boardedCount} / ${totalToBoard} pasajeros (${percentage}%)`;
+                bar.style.width = `${percentage}%`;
+                bar.className = "bg-emerald-500 h-full rounded-full transition-all duration-500 ease-out";
+            } else {
+                const confirmedTotal = pubYes + guestYes;
+                const capacity = state.busCapacity;
+                const percentage = Math.min(100, Math.round((confirmedTotal / capacity) * 100));
+
+                document.getElementById('occupancy-label').innerText = "Ocupación del bus (SÍ)";
+                document.getElementById('occupancy-ratio').innerText = `${confirmedTotal} / ${capacity} (${percentage}%)`;
+                bar.style.width = `${percentage}%`;
+
+                if (percentage >= 100) {
+                    bar.className = "bg-rose-500 h-full rounded-full transition-all duration-500 ease-out";
+                } else if (percentage >= 85) {
+                    bar.className = "bg-amber-500 h-full rounded-full transition-all duration-500 ease-out";
+                } else {
+                    bar.className = "bg-indigo-500 h-full rounded-full transition-all duration-500 ease-out";
+                }
+            }
+        }
+
+        function copyWhatsAppSummary() {
+            const yesList = state.publishers.filter(p => p.status === 'yes').sort((a, b) => a.name.localeCompare(b.name));
+            const maybeList = state.publishers.filter(p => p.status === 'maybe').sort((a, b) => a.name.localeCompare(b.name));
+            
+            let totalYesPub = yesList.length;
+            let totalYesGuests = yesList.reduce((acc, p) => acc + p.guests.length, 0);
+            let grandTotalYes = totalYesPub + totalYesGuests;
+
+            let text = `*🚌 CONTROL DE TRANSPORTE - ASAMBLEA AGOSTO*\n`;
+            text += `*Congregación Anaquito (#7476)*\n`;
+            text += `_Reporte actualizado en tiempo real_\n\n`;
+            text += `*📊 RESUMEN DE ASISTENCIA:*\n`;
+            text += `• *Confirmados (SÍ):* ${grandTotalYes} personas (${totalYesPub} publicadores/externos + ${totalYesGuests} acompañantes)\n`;
+            text += `• *Dudosos (Tal vez):* ${state.publishers.filter(p => p.status === 'maybe').length + state.publishers.filter(p => p.status === 'maybe').reduce((acc, p) => acc + p.guests.length, 0)} personas\n`;
+            text += `• *Capacidad del Bus:* ${grandTotalYes} / ${state.busCapacity} asientos ocupados\n\n`;
+
+            text += `*✅ DETALLE DE CONFIRMADOS (SÍ):*\n`;
+            if (yesList.length === 0) {
+                text += `_Ninguno por el momento._\n`;
+            } else {
+                yesList.forEach((p, idx) => {
+                    text += `${idx + 1}. *${p.name}*`;
+                    if (p.isExternal) {
+                        text += ` _(Congregación ${p.congregation})_`;
+                    }
+                    if (p.guests.length > 0) {
+                        const guestNames = p.guests.map(g => g.name).join(', ');
+                        text += ` (+${p.guests.length} acompañantes: ${guestNames})`;
+                    }
+                    text += `\n`;
+                });
+            }
+
+            if (maybeList.length > 0) {
+                text += `\n*❓ DETALLE DE DUDOSOS (TAL VEZ):*\n`;
+                maybeList.forEach((p, idx) => {
+                    text += `- *${p.name}*`;
+                    if (p.guests.length > 0) {
+                        const guestNames = p.guests.map(g => g.name).join(', ');
+                        text += ` (+${p.guests.length} acompañantes: ${guestNames})`;
+                    }
+                    text += `\n`;
+                });
+            }
+
+            text += `\n_Hermanos, si falta por confirmar, recuerden escribirme por privado para reservar su asiento. ¡Jehová bendiga nuestro orden!_ 🙏🏼✨`;
+
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = text;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showNotification('¡Reporte copiado! Listo para pegar en WhatsApp.', 'success');
+                } else {
+                    showNotification('No se pudo copiar automáticamente.', 'error');
+                }
+            } catch (err) {
+                showNotification('Error al copiar el reporte.', 'error');
+            }
+            document.body.removeChild(tempTextArea);
+        }
+
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notification');
+            const icon = document.getElementById('notification-icon');
+            const text = document.getElementById('notification-text');
+
+            text.innerText = message;
+            
+            if (type === 'success') {
+                icon.className = "fa-solid fa-circle-check text-emerald-400 text-base shrink-0";
+            } else if (type === 'info') {
+                icon.className = "fa-solid fa-circle-info text-indigo-400 text-base shrink-0";
+            } else {
+                icon.className = "fa-solid fa-circle-exclamation text-rose-400 text-base shrink-0";
+            }
+
+            container.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+            
+            setTimeout(() => {
+                container.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        function confirmResetCheckin() {
+            const resetCheckinBtn = document.getElementById('reset-checkin-btn');
+
+            if (confirmResetCheckinStage === 0) {
+                confirmResetCheckinStage = 1;
+                resetCheckinBtn.className = "tap-feedback w-full bg-amber-600 text-slate-950 py-3 rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 border border-amber-500 transition duration-150";
+                resetCheckinBtn.innerHTML = `<i class="fa-solid fa-circle-question text-sm"></i> <span>¿REINICIAR ABORDAJE? PULSA DE NUEVO</span>`;
+                
+                setTimeout(() => {
+                    if (confirmResetCheckinStage === 1) {
+                        cancelResetCheckin();
+                    }
+                }, 4000);
+            } else if (confirmResetCheckinStage === 1) {
+                state.publishers.forEach(pub => {
+                    pub.boarded = false;
+                    pub.guests.forEach(guest => {
+                        guest.boarded = false;
+                    });
+                });
+                
+                cancelResetCheckin();
+                saveState();
+                render();
+                showNotification('¡Pase de abordaje diario reiniciado! Listos para el nuevo día.', 'success');
+            }
+        }
+
+        function cancelResetCheckin() {
+            confirmResetCheckinStage = 0;
+            const resetCheckinBtn = document.getElementById('reset-checkin-btn');
+            resetCheckinBtn.className = "tap-feedback w-full bg-indigo-950/30 hover:bg-indigo-900/40 text-indigo-300 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-indigo-850/40 transition";
+            resetCheckinBtn.innerHTML = `<i class="fa-solid fa-rotate text-sm"></i> <span>REINICIAR ABORDAJE (NUEVO DÍA)</span>`;
+        }
+
+        function confirmReset() {
+            const resetBtn = document.getElementById('reset-btn');
+
+            if (confirmResetStage === 0) {
+                confirmResetStage = 1;
+                resetBtn.className = "tap-feedback w-full bg-amber-600 text-slate-950 py-3 rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 border border-amber-500 transition duration-150";
+                resetBtn.innerHTML = `<i class="fa-solid fa-circle-question text-sm"></i> <span>¿SEGURO? TOCA DE NUEVO PARA REINICIAR TODO</span>`;
+                
+                setTimeout(() => {
+                    if (confirmResetStage === 1) {
+                        cancelReset();
+                    }
+                }, 4000);
+            } else if (confirmResetStage === 1) {
+                initDefaultState();
+                cancelReset();
+                render();
+                showNotification('Se ha restablecido la aplicación al estado original.', 'info');
+                switchTab('list');
+            }
+        }
+
+        function cancelReset() {
+            confirmResetStage = 0;
+            const resetBtn = document.getElementById('reset-btn');
+            resetBtn.className = "tap-feedback w-full bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-rose-900/40 transition";
+            resetBtn.innerHTML = `<i class="fa-solid fa-trash-can text-sm"></i> <span>REINICIAR TODO EL REGISTRO</span>`;
+        }
+    </script>
+</body>
+</html>
