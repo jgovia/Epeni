@@ -189,7 +189,7 @@
         <section id="tab-content-stats" class="hidden space-y-4 slide-up">
             
             <!-- Tarjeta de Instalación Directa Especial para GitHub / Celular Redmi -->
-            <div class="bg-gradient-to-br from-indigo-950 to-slate-900 p-4 rounded-2xl border border-indigo-500/30 shadow-md">
+            <div id="direct-install-container" class="bg-gradient-to-br from-indigo-950 to-slate-900 p-4 rounded-2xl border border-indigo-500/30 shadow-md">
                 <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2 flex items-center gap-1.5">
                     <i class="fa-solid fa-mobile-screen-button text-sm"></i>
                     <span>Acceso Directo PWA</span>
@@ -368,6 +368,7 @@
             render();
             switchTab(state.currentTab || 'list');
             setupPWAHandler();
+            checkInstallationStatus();
         };
 
         // Guardar de manera persistente en LocalStorage
@@ -422,6 +423,12 @@
                 e.preventDefault();
                 deferredPrompt = e;
                 
+                // Si ya está instalado o en standalone, no molestar con el botón
+                if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+                    hideInstallButtons();
+                    return;
+                }
+
                 // Actualizar interfaz avisando que ya se puede instalar nativamente
                 const btnText = document.getElementById('install-btn-text');
                 if(btnText) btnText.innerText = "¡INSTALAR AHORA EN REDMI!";
@@ -430,13 +437,44 @@
                 if(headerBtn) {
                     headerBtn.classList.remove('bg-indigo-600');
                     headerBtn.classList.add('bg-emerald-600', 'animate-pulse');
+                    headerBtn.style.display = 'flex';
+                }
+
+                const directContainer = document.getElementById('direct-install-container');
+                if (directContainer) {
+                    directContainer.style.display = 'block';
                 }
             });
 
             window.addEventListener('appinstalled', () => {
                 deferredPrompt = null;
                 showNotification('¡Felicidades! Se instaló el Control de Transporte en tu escritorio.', 'success');
+                hideInstallButtons();
             });
+        }
+
+        function checkInstallationStatus() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if (isStandalone) {
+                hideInstallButtons();
+            } else {
+                // Ocultar por defecto hasta que beforeinstallprompt se dispare para evitar parpadeos falsos
+                const headerBtn = document.getElementById('header-install-btn');
+                if (headerBtn && !deferredPrompt) {
+                    headerBtn.style.display = 'none';
+                }
+                const directContainer = document.getElementById('direct-install-container');
+                if (directContainer && !deferredPrompt) {
+                    directContainer.style.display = 'none';
+                }
+            }
+        }
+
+        function hideInstallButtons() {
+            const headerBtn = document.getElementById('header-install-btn');
+            if (headerBtn) headerBtn.style.display = 'none';
+            const directContainer = document.getElementById('direct-install-container');
+            if (directContainer) directContainer.style.display = 'none';
         }
 
         // Disparar la ventana de instalación o el aviso en local
@@ -991,7 +1029,7 @@
             }
 
             if (maybeList.length > 0) {
-                text += `\n*❓ DETALLE DE DUDOSOS (TAL VEZ):*\n`;
+                text += `\n*❓ PENDIENTES POR CONFIRMAR:*\n`;
                 maybeList.forEach((p, idx) => {
                     text += `- *${p.name}*`;
                     if (p.guests.length > 0) {
@@ -1002,12 +1040,9 @@
                 });
             }
 
-            text += `\n_Hermanos, si falta por confirmar, recuerden escribirme por privado para reservar su asiento. ¡Jehová bendiga nuestro orden!_ 🙏🏼✨`;
-
             const tempTextArea = document.createElement('textarea');
             tempTextArea.value = text;
             document.body.appendChild(tempTextArea);
-            tempTextArea.select();
             
             try {
                 const successful = document.execCommand('copy');
