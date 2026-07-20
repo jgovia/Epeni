@@ -251,18 +251,18 @@
             </div>
 
             <!-- Indicador de Ocupación / Asistencia Compacto -->
-            <div class="mt-2.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800/85">
-                <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 mb-1">
-                    <span id="occupancy-label" class="uppercase tracking-wider">OCUPACIÓN DEL BUS (SÍ)</span>
-                    <span id="occupancy-ratio" class="text-indigo-400">0 / 48 (0%)</span>
-                </div>
-                <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden p-0.5 border border-slate-700/50">
-                    <div id="occupancy-bar" class="bg-indigo-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
-                </div>
+        <div class="mt-2.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800/85">
+            <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 mb-1">
+                <span id="occupancy-label" class="uppercase tracking-wider">OCUPACIÓN DEL BUS (CONFIRMADOS)</span>
+                <span id="occupancy-ratio" class="text-indigo-400">0 / 48 (0%)</span>
             </div>
-        </header>
+            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden p-0.5 border border-slate-700/50">
+                <div id="occupancy-bar" class="bg-indigo-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+            </div>
+        </div>
+    </header>
 
-        <main class="flex-1 overflow-y-auto px-3 py-4 pb-24">
+    <main class="flex-1 overflow-y-auto px-3 py-4 pb-24">
 
             <!-- ================= PESTAÑA 1: LISTADO DE HERMANOS ================= -->
             <section id="tab-content-list" class="space-y-3 slide-up">
@@ -309,53 +309,53 @@
             </section>
 
             <!-- ================= PESTAÑA 2: AGRUPACIONES (GRUPOS) ================= -->
-            <section id="tab-content-groups" class="hidden space-y-3 slide-up">
-                
-                <!-- Grupo: SÍ (Confirmados) -->
-                <div class="bg-slate-900 rounded-2xl shadow-md border border-emerald-950/80 overflow-hidden">
-                    <div class="bg-emerald-950/30 border-b border-emerald-900/50 px-4 py-3 flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
-                            <h3 class="font-bold text-emerald-400 text-xs tracking-wider uppercase font-extrabold">Confirmados (SÍ)</h3>
-                        </div>
-                        <span class="bg-emerald-500/20 text-emerald-400 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/30" id="group-yes-total">0</span>
+        <section id="tab-content-groups" class="hidden space-y-3 slide-up">
+            
+            <!-- Grupo: SÍ (Confirmados) -->
+            <div class="bg-slate-900 rounded-2xl shadow-md border border-emerald-950/80 overflow-hidden">
+                <div class="bg-emerald-950/30 border-b border-emerald-900/50 px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
+                        <h3 class="font-bold text-emerald-400 text-xs tracking-wider uppercase font-extrabold">Confirmados</h3>
                     </div>
-                    <div class="p-3 divide-y divide-slate-800/60 max-h-[250px] overflow-y-auto" id="group-yes-list">
-                        <!-- Lista de confirmados -->
-                    </div>
+                    <span class="bg-emerald-500/20 text-emerald-400 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/30" id="group-yes-total">0</span>
                 </div>
-
-                <!-- Grupo: TAL VEZ (Dudosos) -->
-                <div class="bg-slate-900 rounded-2xl shadow-md border border-amber-950/80 overflow-hidden">
-                    <div class="bg-amber-950/20 border-b border-amber-900/50 px-4 py-3 flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-circle-question text-amber-500 text-sm"></i>
-                            <h3 class="font-bold text-amber-400 text-xs tracking-wider uppercase font-extrabold">Pendientes por confirmar</h3>
-                        </div>
-                        <span class="bg-amber-500/20 text-amber-400 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-amber-500/30" id="group-maybe-total">0</span>
-                    </div>
-                    <div class="p-3 divide-y divide-slate-800/60 max-h-[160px] overflow-y-auto" id="group-maybe-list">
-                        <!-- Lista de dudosos -->
-                    </div>
+                <div class="p-3 divide-y divide-slate-800/60 max-h-[250px] overflow-y-auto" id="group-yes-list">
+                    <!-- Lista de confirmados -->
                 </div>
+            </div>
 
-                <!-- Grupo: NO (No viajan) -->
-                <div class="bg-slate-900 rounded-2xl shadow-md border border-rose-950/80 overflow-hidden">
-                    <div class="bg-rose-950/20 border-b border-rose-900/50 px-4 py-3 flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-circle-xmark text-rose-500 text-sm"></i>
-                            <h3 class="font-bold text-rose-400 text-xs tracking-wider uppercase font-extrabold">No Viajan</h3>
-                        </div>
-                        <span class="bg-rose-500/20 text-rose-400 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-rose-500/30" id="group-no-total">0</span>
+            <!-- Grupo: TAL VEZ (Dudosos / Por confirmar) -->
+            <div class="bg-slate-900 rounded-2xl shadow-md border border-amber-950/80 overflow-hidden">
+                <div class="bg-amber-950/20 border-b border-amber-900/50 px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question text-amber-500 text-sm"></i>
+                        <h3 class="font-bold text-amber-400 text-xs tracking-wider uppercase font-extrabold">Por confirmar</h3>
                     </div>
-                    <div class="p-3 divide-y divide-slate-800/60 max-h-[160px] overflow-y-auto" id="group-no-list">
-                        <!-- Lista de descartados -->
-                    </div>
+                    <span class="bg-amber-500/20 text-amber-400 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-amber-500/30" id="group-maybe-total">0</span>
                 </div>
-            </section>
+                <div class="p-3 divide-y divide-slate-800/60 max-h-[160px] overflow-y-auto" id="group-maybe-list">
+                    <!-- Lista de dudosos -->
+                </div>
+            </div>
 
-            <!-- ================= PESTAÑA 3: RESUMEN Y CONFIGURACIÓN ================= -->
-            <section id="tab-content-stats" class="hidden space-y-4 slide-up">
+            <!-- Grupo: NO (No viajan) -->
+            <div class="bg-slate-900 rounded-2xl shadow-md border border-rose-950/80 overflow-hidden">
+                <div class="bg-rose-950/20 border-b border-rose-900/50 px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-xmark text-rose-500 text-sm"></i>
+                        <h3 class="font-bold text-rose-400 text-xs tracking-wider uppercase font-extrabold">No</h3>
+                    </div>
+                    <span class="bg-rose-500/20 text-rose-400 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-rose-500/30" id="group-no-total">0</span>
+                </div>
+                <div class="p-3 divide-y divide-slate-800/60 max-h-[160px] overflow-y-auto" id="group-no-list">
+                    <!-- Lista de descartados -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PESTAÑA 3: RESUMEN Y CONFIGURACIÓN ================= -->
+        <section id="tab-content-stats" class="hidden space-y-4 slide-up">
                 
                 <!-- Tarjeta de Instalación Directa -->
                 <div id="direct-install-container" class="bg-gradient-to-br from-indigo-950 to-slate-900 p-4 rounded-2xl border border-indigo-500/30 shadow-md">
@@ -385,34 +385,34 @@
                 </div>
 
                 <!-- Tabla de Resumen Técnico Con los 65 Publicadores -->
-                <div class="bg-slate-900 rounded-2xl shadow-md p-4 border border-slate-800">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800 pb-2 mb-3"><i class="fa-solid fa-chart-simple text-indigo-400 mr-1.5"></i>Consolidado de Pasajeros</h4>
-                    <div class="grid grid-cols-4 text-center text-[10px] font-extrabold text-slate-500 uppercase tracking-wider gap-1 pb-1">
-                        <div></div>
-                        <div>Publ.</div>
-                        <div>Acomp.</div>
-                        <div class="text-right">Subtotal</div>
+            <div class="bg-slate-900 rounded-2xl shadow-md p-4 border border-slate-800">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800 pb-2 mb-3"><i class="fa-solid fa-chart-simple text-indigo-400 mr-1.5"></i>Consolidado de Pasajeros</h4>
+                <div class="grid grid-cols-4 text-center text-[10px] font-extrabold text-slate-500 uppercase tracking-wider gap-1 pb-1">
+                    <div></div>
+                    <div>Publ.</div>
+                    <div>Acomp.</div>
+                    <div class="text-right">Subtotal</div>
+                </div>
+                <div class="divide-y divide-slate-800/80 text-xs space-y-2 pt-1">
+                    <div class="grid grid-cols-4 items-center text-center py-2">
+                        <div class="text-left font-semibold text-emerald-400">Confirmado</div>
+                        <div id="table-pub-yes" class="text-slate-300">0</div>
+                        <div id="table-guest-yes" class="text-slate-300">0</div>
+                        <div id="table-sub-yes" class="text-right font-bold text-emerald-400">0</div>
                     </div>
-                    <div class="divide-y divide-slate-800/80 text-xs space-y-2 pt-1">
-                        <div class="grid grid-cols-4 items-center text-center py-2">
-                            <div class="text-left font-semibold text-emerald-400">Confirmados</div>
-                            <div id="table-pub-yes" class="text-slate-300">0</div>
-                            <div id="table-guest-yes" class="text-slate-300">0</div>
-                            <div id="table-sub-yes" class="text-right font-bold text-emerald-400">0</div>
-                        </div>
-                        <div class="grid grid-cols-4 items-center text-center py-2">
-                            <div class="text-left font-semibold text-amber-400">Tal Vez</div>
-                            <div id="table-pub-maybe" class="text-slate-300">0</div>
-                            <div id="table-guest-maybe" class="text-slate-300">0</div>
-                            <div id="table-sub-maybe" class="text-right font-bold text-amber-400">0</div>
-                        </div>
-                        <div class="grid grid-cols-4 items-center text-center py-2">
-                            <div class="text-left font-semibold text-rose-400">No van</div>
-                            <div id="table-pub-no" class="text-slate-300">0</div>
-                            <div id="table-guest-no" class="text-slate-300">0</div>
-                            <div id="table-sub-no" class="text-right font-bold text-rose-400">0</div>
-                        </div>
-                        <div class="grid grid-cols-4 items-center text-center py-2.5 font-bold text-white bg-slate-950 p-2 rounded-xl border border-slate-800">
+                    <div class="grid grid-cols-4 items-center text-center py-2">
+                        <div class="text-left font-semibold text-amber-400">Por confirmar</div>
+                        <div id="table-pub-maybe" class="text-slate-300">0</div>
+                        <div id="table-guest-maybe" class="text-slate-300">0</div>
+                        <div id="table-sub-maybe" class="text-right font-bold text-amber-400">0</div>
+                    </div>
+                    <div class="grid grid-cols-4 items-center text-center py-2">
+                        <div class="text-left font-semibold text-rose-400">No</div>
+                        <div id="table-pub-no" class="text-slate-300">0</div>
+                        <div id="table-guest-no" class="text-slate-300">0</div>
+                        <div id="table-sub-no" class="text-right font-bold text-rose-400">0</div>
+                    </div>
+                    <div class="grid grid-cols-4 items-center text-center py-2.5 font-bold text-white bg-slate-950 p-2 rounded-xl border border-slate-800">
                             <div class="text-left text-[11px] uppercase tracking-wider">TOTALES</div>
                             <div id="table-total-pub">65</div>
                             <div id="table-total-guest">0</div>
@@ -1011,8 +1011,8 @@
                     </div>
                     
                     <div class="grid grid-cols-3 rounded-xl overflow-hidden border border-slate-800 p-0.5 bg-slate-950">
-                        <button onclick="setPublisherStatus(${pub.id}, 'yes')" class="tap-feedback py-2 rounded-lg text-xs font-bold tracking-wide transition duration-100 ${yesClass}">Sí</button>
-                        <button onclick="setPublisherStatus(${pub.id}, 'maybe')" class="tap-feedback py-2 rounded-lg text-xs font-bold tracking-wide transition duration-100 ${maybeClass}">Tal vez</button>
+                        <button onclick="setPublisherStatus(${pub.id}, 'yes')" class="tap-feedback py-2 rounded-lg text-xs font-bold tracking-wide transition duration-100 ${yesClass}">Confirmado</button>
+                        <button onclick="setPublisherStatus(${pub.id}, 'maybe')" class="tap-feedback py-2 rounded-lg text-xs font-bold tracking-wide transition duration-100 ${maybeClass}">Por confirmar</button>
                         <button onclick="setPublisherStatus(${pub.id}, 'no')" class="tap-feedback py-2 rounded-lg text-xs font-bold tracking-wide transition duration-100 ${noClass}">No</button>
                     </div>
                 </div>
@@ -1160,7 +1160,7 @@
                 const capacity = state.busCapacity;
                 const percentage = Math.min(100, Math.round((confirmedTotal / capacity) * 100));
 
-                document.getElementById('occupancy-label').innerText = "Ocupación del bus (SÍ)";
+                document.getElementById('occupancy-label').innerText = "Ocupación del bus (Confirmados)";
                 document.getElementById('occupancy-ratio').innerText = `${confirmedTotal} / ${capacity} (${percentage}%)`;
                 bar.style.width = `${percentage}%`;
 
@@ -1184,13 +1184,13 @@
 
             let text = `*🚌 CONTROL DE TRANSPORTE - ASAMBLEA AGOSTO*\n`;
             text += `*Congregación Anaquito (#7476)*\n`;
-            text += `_Reporte actualizado en tiempo real_\n\n`;
+            text += `_Reporte de pagos actualizado_\n\n`;
             text += `*📊 RESUMEN DE ASISTENCIA:*\n`;
-            text += `• *Confirmados (SÍ):* ${grandTotalYes} personas (${totalYesPub} publicadores/externos + ${totalYesGuests} acompañantes)\n`;
-            text += `• *Pendientes (Tal vez):* ${state.publishers.filter(p => p.status === 'maybe').length + state.publishers.filter(p => p.status === 'maybe').reduce((acc, p) => acc + p.guests.length, 0)} personas\n`;
+            text += `• *Confirmados (PAGADOS):* ${grandTotalYes} personas (${totalYesPub} publicadores/externos + ${totalYesGuests} acompañantes)\n`;
+            text += `• *Por confirmar:* ${state.publishers.filter(p => p.status === 'maybe').length + state.publishers.filter(p => p.status === 'maybe').reduce((acc, p) => acc + p.guests.length, 0)} personas\n`;
             text += `• *Capacidad del Bus:* ${grandTotalYes} / ${state.busCapacity} asientos ocupados\n\n`;
 
-            text += `*✅ DETALLE DE CONFIRMADOS (SÍ):*\n`;
+            text += `*✅ DETALLE DE CONFIRMADOS (PAGADOS):*\n`;
             if (yesList.length === 0) {
                 text += `_Ninguno por el momento._\n`;
             } else {
@@ -1208,7 +1208,7 @@
             }
 
             if (maybeList.length > 0) {
-                text += `\n*❓ PENDIENTES POR CONFIRMAR:*\n`;
+                text += `\n*❓ POR CONFIRMAR:*\n`;
                 maybeList.forEach((p, idx) => {
                     text += `- *${p.name}*`;
                     if (p.guests.length > 0) {
